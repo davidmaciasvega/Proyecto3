@@ -1,0 +1,57 @@
+# Unity-generated folders and files
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+.sysinfo.txt
+
+# Ignore large binary files and package builds
+*.apk
+*.aab
+*.app
+*.unitypackage
+*.unitypackage.meta
+
+# Memory captures and debug logs
+/[Mm]emoryCaptures/
+*[Rr]ecordings/
+*.pdb
+*.mdb
+
+# Packed Addressables
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+
+# Temporary auto-generated files
+*.tmp
+*.bak
+*.log
+
+# IDE-specific files
+.vscode/
+*.csproj
+*.sln
+*.unityproj
+*.user
+*.pidb
+*.VC.db
+.vs/
+.gradle/
+
+# Ignore local IDE configurations but allow project settings
+/.vscode/*.workspace
+/.vscode/*.code-workspace
+
+# Ignore cache directories
+.consulo/
+ExportedObj/
+
+# Ignore Asset Store tools (optional)
+# /[Aa]ssets/AssetStoreTools*
+
+# Git LFS tracking (ensure large files are properly handled)
+git lfs track "*.fbx"
+git lfs track "*.png"
+git lfs track "*.jpg"
