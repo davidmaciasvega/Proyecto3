@@ -1,10 +1,11 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class ControladorDelJugador : MonoBehaviour
 {
-    // Variables
+    // Variables ya definidas
     int contador;
     int nivel;
     Rigidbody rb;
@@ -17,17 +18,23 @@ public class ControladorDelJugador : MonoBehaviour
     public GameObject obstaculoPrefab;
     public int numeroDeObstaculos = 3; // Número de obstáculos
     private bool avanzandoDeNivel = false; // Control booleano para evitar bucles
-
     public GameObject cuboxPrefab;
-public int numeroDeCubox = 1; 
-
+    public int numeroDeCubox = 1; 
+    public TextMeshProUGUI highScoreTexto; // Texto para mostrar el puntaje más alto
+    private int highScore; // Variable para almacenar el puntaje más alto
+    
+    
     // Método Awake (inicializa valores)
+
     public void Awake()
     {
         rb = GetComponent<Rigidbody>();
         contador = 0;
         nivel = 1; // Nivel inicial
         actualizarmarcador(); // Inicializa los textos
+         highScore = PlayerPrefs.GetInt("Puntaje mas alto", 0); 
+    
+    actualizarmarcador();
     }
 
     // Método FixedUpdate para movimiento y salto
@@ -46,7 +53,13 @@ public int numeroDeCubox = 1;
         }
     }
 
-    // Método Update para verificar cubos
+void Start()
+{
+    highScore = PlayerPrefs.GetInt("HighScore", 0); // Ahora sí actualiza la variable global
+    highScoreTexto.text = "High Score: " + highScore;
+}
+
+  // Método Update para verificar cubos
 void Update()
 {
     if (!avanzandoDeNivel) // Solo avanza si no está ya cambiando de nivel
@@ -67,29 +80,98 @@ public void OnTriggerEnter(Collider other)
     if (other.CompareTag("cubo"))
     {
         Destroy(other.gameObject);
-        contador++; // Suma puntos
+        contador++;
+
+        // 🔹 Solo actualizar el high score si el contador es mayor
+        if (contador > highScore)
+        {
+            highScore = contador;
+            PlayerPrefs.SetInt("HighScore", highScore);
+            PlayerPrefs.Save();
+        }
+
         actualizarmarcador();
     }
     else if (other.CompareTag("cubox"))
     {
         Destroy(other.gameObject);
-        contador = Mathf.Max(contador - 1, 0); // 🔴 Resta 1 puntos (mínimo 0)
+        contador = Mathf.Max(contador - 1, 0);
         actualizarmarcador();
     }
 }
+public void GuardarHighScore()
+{
+    int highScore = PlayerPrefs.GetInt("HighScore", 0);
+    if (contador > highScore)
+    {
+        PlayerPrefs.SetInt("HighScore", contador);
+        PlayerPrefs.Save();
+        highScoreTexto.text = "High Score: " + contador;
+    }
+}
+public void ReiniciarHighScore()
+{
+    if (highScoreTexto == null)
+    {
+        Debug.LogError("highScoreTexto es NULL. Asigna el objeto de texto en el Inspector.");
+    }
+    else
+    {
+        PlayerPrefs.SetInt("HighScore", 0);
+        PlayerPrefs.Save();
+        highScore = 0;  // Reinicia el high score a 0
+        highScoreTexto.text = "High Score: 0"; // Actualiza el texto de high score
+    }
+
+
+    highScoreTexto.text = "High Score: 0";
+}
+
+ 
+ public void ReiniciarVariables()
+    {
+        // Reinicia las variables esenciales
+        contador = 0;
+        nivel = 1;
+        velocidad = 5.0f; // Restablece la velocidad, por ejemplo
+        fuerzaSalto = 5.0f; // Restablece la fuerza del salto
+        numeroDeCubos = 5; // Restablece el número de cubos en el siguiente nivel
+        numeroDeObstaculos = 3; // Restablece el número de obstáculos
+        numeroDeCubox = 1; // Restablece el número de cuboxes
+        avanzandoDeNivel = false; // Resetea el control para avanzar de nivel
+
+        // Restablece el puntaje más alto (si lo has guardado en PlayerPrefs, puedes restablecerlo de esta manera)
+        highScore = PlayerPrefs.GetInt("Puntaje mas alto", 0); 
+
+        // Actualiza la UI con los valores reiniciados
+        actualizarmarcador();
+    }
+
 
     // Método para actualizar los textos
-    private void actualizarmarcador()
-    {
-        puntuacion.text = "Puntuación: " + contador; // Actualiza solo la puntuación
-        nivelTexto.text = "Nivel: " + nivel; // Actualiza solo el nivel
-    }
+private void actualizarmarcador()
+{
+    if (puntuacion != null)
+        puntuacion.text = "Puntuación: " + contador;
+    else
+        Debug.LogError("Puntuación no asignada en el Inspector.");
+
+    if (nivelTexto != null)
+        nivelTexto.text = "Nivel: " + nivel;
+    else
+        Debug.LogError("NivelTexto no asignado en el Inspector.");
+
+    if (highScoreTexto != null)
+        highScoreTexto.text = "Récord: " + highScore;
+    else
+        Debug.LogError("HighScoreTexto no asignado en el Inspector.");
+}
 
     // Método para subir de nivel
   
 
   
-   void SubirNivel()
+   private void SubirNivel()
 {
     Debug.Log("Avanzando al nivel: " + nivel);
 
@@ -214,4 +296,5 @@ public void OnTriggerEnter(Collider other)
         Instantiate(obstaculoPrefab, posicionAleatoria, UnityEngine.Quaternion.identity);
     }
 }
+
 }
