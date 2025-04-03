@@ -23,6 +23,7 @@ public class ControladorDelJugador : MonoBehaviour
     public TextMeshProUGUI highScoreTexto; // Texto para mostrar el puntaje más alto
     private int highScore; // Variable para almacenar el puntaje más alto
     
+    public CambioDeEstilo cambioDeEstilo; // Referencia a CambioDeEstilo
     
     // Método Awake (inicializa valores)
 
@@ -171,11 +172,11 @@ private void actualizarmarcador()
   
 
   
-   private void SubirNivel()
+private void SubirNivel()
 {
-    Debug.Log("Avanzando al nivel: " + nivel);
+    nivel++;  // Incrementa el nivel primero
+    Debug.Log("Avanzando al nivel: " + nivel);  // Luego loguea el nuevo nivel
 
-    nivel++; 
     velocidad += 2.0f;
     fuerzaSalto += 1.0f;
 
@@ -189,9 +190,15 @@ private void actualizarmarcador()
     GenerarCubox();
     numeroDeCubox = Mathf.Min(numeroDeCubox + 1, 5);
 
-    // 🛑 Asegurar que solo vuelve a detectar cubos después de generarlos
+    // Solo cambia los colores si el nivel es 2 o más
+    if (nivel > 1)
+    {
+        cambioDeEstilo.SiguienteNivel();
+    }
+
     StartCoroutine(EsperarAntesDeReactivarDetección());
 }
+
 
 
     // Método para generar cubos

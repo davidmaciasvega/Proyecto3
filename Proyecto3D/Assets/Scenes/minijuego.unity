@@ -1972,6 +1972,65 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3589836159416718158, guid: 3cb204be61f608b4484f5191d2f69e33, type: 3}
   m_PrefabInstance: {fileID: 891347021}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1113035008
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1113035010}
+  - component: {fileID: 1113035009}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1113035009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113035008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab593e7b1e96a3b4baca4a6fcb69fce6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nivelActual: 1
+  suelo: {fileID: 43851847}
+  jugadorRenderer: {fileID: 1545887797}
+  coloresSuelo:
+  - {r: 0.764151, g: 0.6157131, b: 0.23429158, a: 0}
+  - {r: 0.7264151, g: 0.39911446, b: 0.35978106, a: 0}
+  - {r: 0.4751384, g: 0.22027412, b: 0.6226415, a: 0}
+  - {r: 0.3871487, g: 0.62352943, b: 0.21960783, a: 0}
+  - {r: 0.30838373, g: 0.48195088, b: 0.8490566, a: 0}
+  coloresJugador:
+  - {r: 0.23098753, g: 0.8018868, b: 0.17777678, a: 0}
+  - {r: 0.11480955, g: 0.1356518, b: 0.5660378, a: 0}
+  - {r: 0.0754717, g: 0.07013172, b: 0.07013172, a: 0}
+  - {r: 1, g: 1, b: 1, a: 0}
+  - {r: 0.9154563, g: 0.031372547, b: 0.93333334, a: 0}
+--- !u!4 &1113035010
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1113035008}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.6104054, y: 1.4874084, z: 0.17640893}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1118959401
 GameObject:
   m_ObjectHideFlags: 0
@@ -2642,6 +2701,7 @@ MonoBehaviour:
   cuboxPrefab: {fileID: 3632929888233061214, guid: bcc5e3a34eebec247aad684faaa6e064, type: 3}
   numeroDeCubox: 1
   highScoreTexto: {fileID: 1118959403}
+  cambioDeEstilo: {fileID: 1113035009}
 --- !u!114 &1545887802
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3091,3 +3151,4 @@ SceneRoots:
   - {fileID: 1007329038}
   - {fileID: 305905902}
   - {fileID: 1582890432}
+  - {fileID: 1113035010}
