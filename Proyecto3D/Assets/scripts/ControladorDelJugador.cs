@@ -25,6 +25,8 @@ public class ControladorDelJugador : MonoBehaviour
     
     public CambioDeEstilo cambioDeEstilo; // Referencia a CambioDeEstilo
     
+public PotenciadorTemporal potenciador; // Arrástralo desde el inspector
+
     // Método Awake (inicializa valores)
 
     public void Awake()
@@ -195,6 +197,11 @@ private void SubirNivel()
     {
         cambioDeEstilo.SiguienteNivel();
     }
+    if (nivel % 2 == 0 && potenciador != null)
+{
+    Debug.Log("🚀 Potenciador activado por nivel " + nivel);
+    potenciador.ActivarPotenciador();
+}
 
     StartCoroutine(EsperarAntesDeReactivarDetección());
 }
