@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class ControlesEnPantalla : MonoBehaviour
 {
@@ -13,40 +14,59 @@ public class ControlesEnPantalla : MonoBehaviour
     public float fuerzaSalto = 10f;
     private Rigidbody rb;
 
+    // Banderas de movimiento
+    private bool moviendoIzquierda;
+    private bool moviendoDerecha;
+    private bool moviendoAdelante;
+    private bool moviendoAtras;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        
-        // Asignar eventos a los botones
-        botonMovimientoIzquierda.onClick.AddListener(MoverIzquierda);
-        botonMovimientoDerecha.onClick.AddListener(MoverDerecha);
-        botonMovimientoAdelante.onClick.AddListener(MoverAdelante);
-        botonMovimientoAtras.onClick.AddListener(MoverAtras);
+
+        // Eventos de presionar y soltar los botones
+        AgregarEventos(botonMovimientoIzquierda, () => moviendoIzquierda = true, () => moviendoIzquierda = false);
+        AgregarEventos(botonMovimientoDerecha, () => moviendoDerecha = true, () => moviendoDerecha = false);
+        AgregarEventos(botonMovimientoAdelante, () => moviendoAdelante = true, () => moviendoAdelante = false);
+        AgregarEventos(botonMovimientoAtras, () => moviendoAtras = true, () => moviendoAtras = false);
         botonSalto.onClick.AddListener(Saltar);
     }
 
-    void MoverIzquierda()
+    void Update()
     {
-        rb.AddForce(Vector3.left * velocidad);
-    }
+        Vector3 direccion = Vector3.zero;
 
-void MoverDerecha()
-{
-    rb.AddForce(Vector3.right * velocidad);  // Movimiento hacia la derecha (eje X positivo)
-}
+        if (moviendoIzquierda) direccion += Vector3.left;
+        if (moviendoDerecha) direccion += Vector3.right;
+        if (moviendoAdelante) direccion += Vector3.forward;
+        if (moviendoAtras) direccion += Vector3.back;
 
-    void MoverAdelante()
-    {
-        rb.AddForce(Vector3.forward * velocidad);
-    }
-
-    void MoverAtras()
-    {
-        rb.AddForce(Vector3.back * velocidad);
+        // Movimiento suave continuo
+        rb.AddForce(direccion.normalized * velocidad);
     }
 
     void Saltar()
     {
+        // Solo saltar si está en el suelo (opcional)
         rb.AddForce(Vector3.up * fuerzaSalto, ForceMode.Impulse);
+    }
+
+    void AgregarEventos(Button boton, System.Action onPress, System.Action onRelease)
+    {
+        EventTrigger trigger = boton.gameObject.GetComponent<EventTrigger>();
+        if (trigger == null)
+            trigger = boton.gameObject.AddComponent<EventTrigger>();
+
+        // Presionar
+        EventTrigger.Entry entryDown = new EventTrigger.Entry();
+        entryDown.eventID = EventTriggerType.PointerDown;
+        entryDown.callback.AddListener((data) => { onPress(); });
+        trigger.triggers.Add(entryDown);
+
+        // Soltar
+        EventTrigger.Entry entryUp = new EventTrigger.Entry();
+        entryUp.eventID = EventTriggerType.PointerUp;
+        entryUp.callback.AddListener((data) => { onRelease(); });
+        trigger.triggers.Add(entryUp);
     }
 }

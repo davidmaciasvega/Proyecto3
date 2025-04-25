@@ -41,7 +41,12 @@ public class PotenciadorTemporal : MonoBehaviour
 
         // Efecto visual
         GetComponent<Renderer>().material.color = Color.yellow;
-        trail.enabled = true;
+
+        // Activar el TrailRenderer si existe
+        if (trail != null)
+        {
+            trail.enabled = true;
+        }
 
         yield return new WaitForSeconds(duracion);
 
@@ -49,6 +54,21 @@ public class PotenciadorTemporal : MonoBehaviour
 
         // Restaurar visual
         GetComponent<Renderer>().material.color = colorOriginal;
-        trail.enabled = false;
+
+        // Desactivar el TrailRenderer si existe
+        if (trail != null)
+        {
+            trail.enabled = false;
+        }
+    }
+
+    // Método OnDestroy para limpiar el TrailRenderer
+    private void OnDestroy()
+    {
+        // Limpiar cualquier referencia al TrailRenderer antes de destruir el objeto
+        if (trail != null)
+        {
+            trail.enabled = false;
+        }
     }
 }

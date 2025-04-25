@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;  // Importa el nuevo Input System
 
 public class ControladorDelJugador : MonoBehaviour
 {
@@ -9,23 +10,25 @@ public class ControladorDelJugador : MonoBehaviour
     int contador;
     int nivel;
     Rigidbody rb;
-    public TextMeshProUGUI puntuacion; // Texto para la puntuación
-    public TextMeshProUGUI nivelTexto; // Texto para el nivel
+    public TextMeshProUGUI puntuacion;
+    public TextMeshProUGUI nivelTexto;
     public float velocidad;
     public float fuerzaSalto = 5.0f;
     public GameObject cuboPrefab;
-    public int numeroDeCubos = 5; // Número de cubos en el siguiente nivel
+    public int numeroDeCubos = 5;
     public GameObject obstaculoPrefab;
-    public int numeroDeObstaculos = 3; // Número de obstáculos
-    private bool avanzandoDeNivel = false; // Control booleano para evitar bucles
+    public int numeroDeObstaculos = 3;
+    private bool avanzandoDeNivel = false;
     public GameObject cuboxPrefab;
-    public int numeroDeCubox = 1; 
-    public TextMeshProUGUI highScoreTexto; // Texto para mostrar el puntaje más alto
-    private int highScore; // Variable para almacenar el puntaje más alto
-    
-    public CambioDeEstilo cambioDeEstilo; // Referencia a CambioDeEstilo
-    
-public PotenciadorTemporal potenciador; // Arrástralo desde el inspector
+    public int numeroDeCubox = 1;
+    public TextMeshProUGUI highScoreTexto;
+    private int highScore;
+    public CambioDeEstilo cambioDeEstilo;
+    public PotenciadorTemporal potenciador;
+
+    // Nueva variable para el Input System
+    private PlayerControls playerControls;  // Asumiendo que tienes un objeto PlayerControls
+
 
     // Método Awake (inicializa valores)
 
@@ -33,50 +36,74 @@ public PotenciadorTemporal potenciador; // Arrástralo desde el inspector
     {
         rb = GetComponent<Rigidbody>();
         contador = 0;
-        nivel = 1; // Nivel inicial
-        actualizarmarcador(); // Inicializa los textos
-         highScore = PlayerPrefs.GetInt("Puntaje mas alto", 0); 
-    
-    actualizarmarcador();
+        nivel = 1;
+        actualizarmarcador();
+        highScore = PlayerPrefs.GetInt("Puntaje mas alto", 0);
+        actualizarmarcador();
+        
+        // Configuración del Input System
+        playerControls = new PlayerControls();  // Crea una instancia del Input System
+        playerControls.Player.Move.performed += ctx => Mover(ctx.ReadValue<Vector2>());  // Captura movimiento
+        playerControls.Player.Jump.performed += ctx => Salto();  // Captura salto
+    }
+    // Método FixedUpdate para movimiento y salto
+   
+   
+       private void OnEnable()
+    {
+        playerControls.Enable();  // Activa el Input System
+    }
+
+    // Método para desactivar el Input System
+    private void OnDisable()
+    {
+        playerControls.Disable();  // Desactiva el Input System
     }
 
     // Método FixedUpdate para movimiento y salto
     public void FixedUpdate()
     {
-        // Movimiento horizontal y vertical
-        float movimientoHorizontal = Input.GetAxis("Horizontal");
-        float movimientoVertical = Input.GetAxis("Vertical");
-        Vector3 movimiento = new Vector3(movimientoHorizontal, 0.0f, movimientoVertical);
-        rb.AddForce(movimiento * velocidad);
+        // No es necesario más código para el movimiento ya que lo manejamos en el Input System
+    }
 
-        // Lógica para el salto
-        if (Input.GetKeyDown(KeyCode.Space))
+    // Método para mover al jugador
+    private void Mover(Vector2 movimiento)
+    {
+        Vector3 movimiento3D = new Vector3(movimiento.x, 0.0f, movimiento.y);
+        rb.AddForce(movimiento3D * velocidad);
+    }
+
+    // Método para saltar
+    private void Salto()
+    {
+        rb.AddForce(new Vector3(0, fuerzaSalto, 0), ForceMode.Impulse);
+    }
+
+    void Start()
+    {
+        highScore = PlayerPrefs.GetInt("HighScore", 0);
+        highScoreTexto.text = "High Score: " + highScore;
+    }
+
+    // Método Update para verificar cubos
+    void Update()
+    {
+        if (!avanzandoDeNivel)
         {
-            rb.AddForce(new Vector3(0, fuerzaSalto, 0), ForceMode.Impulse);
+            int cubosRestantes = GameObject.FindGameObjectsWithTag("cubo").Length;
+            Debug.Log("Cubos restantes: " + cubosRestantes);
+
+            if (cubosRestantes == 0)
+            {
+                avanzandoDeNivel = true;
+                SubirNivel();
+            }
         }
     }
 
-void Start()
-{
-    highScore = PlayerPrefs.GetInt("HighScore", 0); // Ahora sí actualiza la variable global
-    highScoreTexto.text = "High Score: " + highScore;
-}
 
   // Método Update para verificar cubos
-void Update()
-{
-    if (!avanzandoDeNivel) // Solo avanza si no está ya cambiando de nivel
-    {
-        int cubosRestantes = GameObject.FindGameObjectsWithTag("cubo").Length;
-        Debug.Log("Cubos restantes: " + cubosRestantes);
 
-        if (cubosRestantes == 0) 
-        {
-            avanzandoDeNivel = true; // Evita que se repita el proceso varias veces
-   SubirNivel();
-        }
-    }
-}
     // Método OnTriggerEnter para recolectar objetos
 public void OnTriggerEnter(Collider other)
 {
